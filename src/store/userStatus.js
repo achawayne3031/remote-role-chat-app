@@ -17,10 +17,16 @@ export const UserSlice = createSlice({
     setLoggedIn: (state, actions) => {
       state.loggedIn = true;
     },
+    logOutUser: (state, actions) => {
+      state.connected = false;
+      state.loggedIn = false;
+      state.data = {};
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { addUserData, setConnected, setLoggedIn } = UserSlice.actions;
+export const { addUserData, setConnected, setLoggedIn, logOutUser } =
+  UserSlice.actions;
 
 export default UserSlice.reducer;

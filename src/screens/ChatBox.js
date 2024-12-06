@@ -9,10 +9,17 @@ import { setUserForChat } from "../store/chatSlice";
 import UserItem from "../components/UserItem";
 import "./../styles/chat-box.scss";
 import { filterArray } from "../util/funcHelper";
-import { sendMessage, socket, getMessage } from "../socket/SocketIo";
+import {
+  sendMessage,
+  socket,
+  getMessage,
+  disConnectUser,
+} from "../socket/SocketIo";
 import ChatBoxHeader from "../components/ChatBoxHeader";
 import ChatItemList from "../components/ChatItemList";
 import { useRef } from "react";
+import { setConnectedUsers } from "../store/chatSlice";
+import { logOutUser } from "../store/userStatus";
 
 const ChatBox = () => {
   const connectedUserListStored = useSelector(
@@ -41,7 +48,33 @@ const ChatBox = () => {
       behavior: "smooth",
       block: "end",
     });
-  }, [connected, loggedIn, connectedUserListStored, chatMessage]);
+
+    // //// Update connected users on the store /////
+    socket.on("disconnect", (serverData) => {});
+
+    socket.on("emit-active-users", (serverData) => {
+      dispatch(setConnectedUsers(serverData));
+    });
+
+    ///// get sent messages ////
+    socket.on("emit-sent-message", (severMessageData) => {
+      let getOurDataOut = severMessageData.find(
+        (myData) => myData.email === selectedUser.email
+      );
+
+      if (getOurDataOut && getOurDataOut != undefined) {
+        let selectedUserChat = getOurDataOut.messages;
+
+        setChatMessage(selectedUserChat);
+      }
+
+      setTimeout(function () {
+        if (chatWrapperRef.current)
+          chatWrapperRef.current.scrollTop =
+            chatWrapperRef.current.scrollHeight;
+      }, 10);
+    });
+  }, [connected, loggedIn, connectedUserListStored, chatMessage, socket]);
 
   const [searchText, setSearchText] = useState("");
   const [messageText, setMessageText] = useState("");
@@ -70,15 +103,21 @@ const ChatBox = () => {
 
     getMessage();
 
+    ///// Get messages /////
     socket.on("emit-get-message", (severMessageData) => {
       let getOurDataOut = severMessageData.find(
-        (myData) => myData.email === selectedUser.email
+        (myData) => myData.email === data.email
       );
 
       if (getOurDataOut && getOurDataOut != undefined) {
         let selectedUserChat = getOurDataOut.messages;
-
         setChatMessage(selectedUserChat);
+
+        setTimeout(function () {
+          if (chatWrapperRef.current)
+            chatWrapperRef.current.scrollTop =
+              chatWrapperRef.current.scrollHeight;
+        }, 10);
       }
     });
   };
@@ -102,18 +141,6 @@ const ChatBox = () => {
       /// Send message to user ///
       sendMessage(socketMessageData);
 
-      socket.on("emit-sent-message", (severMessageData) => {
-        let getOurDataOut = severMessageData.find(
-          (myData) => myData.email === selectedUser.email
-        );
-
-        if (getOurDataOut && getOurDataOut != undefined) {
-          let selectedUserChat = getOurDataOut.messages;
-
-          setChatMessage(selectedUserChat);
-        }
-      });
-
       setMessageText("");
     }
   };
@@ -123,6 +150,12 @@ const ChatBox = () => {
       event.preventDefault();
       handleSendChatMessage();
     }
+  };
+
+  const handleDisconnectUser = () => {
+    disConnectUser();
+    dispatch(logOutUser());
+    navigate("/");
   };
 
   return (
@@ -140,8 +173,19 @@ const ChatBox = () => {
               className="col-md-3 col-12"
             >
               <div className="text-center">
-                <img src={chatLogo} className="img-fluid" />
+                <div className="d-flex justify-content-between">
+                  <div>
+                    <img src={chatLogo} className="img-fluid" />
+                  </div>
+                  <div>
+                    <span
+                      className="fa fa-sign-out logout-icon"
+                      onClick={() => handleDisconnectUser()}
+                    ></span>
+                  </div>
+                </div>
               </div>
+
               <div>
                 <input
                   className="search-box"
@@ -157,7 +201,9 @@ const ChatBox = () => {
                     if (userItem.email !== currentUserData.email) {
                       return (
                         <UserItem
-                          onClick={() => handleSelectUserToChat(userItem)}
+                          onClick={() => {
+                            handleSelectUserToChat(userItem);
+                          }}
                           data={userItem}
                         />
                       );
