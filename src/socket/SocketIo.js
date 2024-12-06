@@ -36,6 +36,10 @@ export const getMessage = (data) => {
   socket.emit("get-message", data);
 };
 
+export const updateNotification = (data) => {
+  socket.emit("update-notification", data);
+};
+
 export const disConnectUser = (data) => {
   socket.disconnect();
   clearInterval(startPinger);

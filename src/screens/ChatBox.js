@@ -14,6 +14,7 @@ import {
   socket,
   getMessage,
   disConnectUser,
+  updateNotification,
 } from "../socket/SocketIo";
 import ChatBoxHeader from "../components/ChatBoxHeader";
 import ChatItemList from "../components/ChatItemList";
@@ -33,6 +34,7 @@ const ChatBox = () => {
   const currentUserData = useSelector((state) => state.user.data);
   const loggedIn = useSelector((state) => state.user.loggedIn);
   const connected = useSelector((state) => state.user.connected);
+  const [chatIsOpen, setChatIsOpen] = useState(false);
 
   const chatWrapperRef = useRef(null);
 
@@ -52,15 +54,25 @@ const ChatBox = () => {
       dispatch(setConnectedUsers(serverData));
     });
 
+    // socket.on("emit-opened-notification", (serverData) => {
+    //   dispatch(setConnectedUsers(serverData));
+    // });
+
     ///// get sent messages ////
     socket.on("emit-sent-message", (severMessageData) => {
       dispatch(setConnectedUsers(severMessageData));
 
+      //   if (chatIsOpen) {
+      //     let markAsReadData = {
+      //       from: selectedUser.email,
+      //       to: currentUserData.email,
+      //     };
+      //     updateNotification(markAsReadData);
+      //   }
+
       let getOurDataOut = severMessageData.find(
         (myData) => myData.email === selectedUser.email
       );
-
-      console.log(getOurDataOut, "oder user");
 
       if (getOurDataOut && getOurDataOut != undefined) {
         let selectedUserChat = getOurDataOut.messages;
@@ -96,6 +108,7 @@ const ChatBox = () => {
 
   const handleSelectUserToChat = (data) => {
     dispatch(setUserForChat(data));
+    setChatIsOpen(true);
 
     let markAsReadData = {
       from: data.email,
