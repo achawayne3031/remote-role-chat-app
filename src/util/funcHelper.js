@@ -1,0 +1,36 @@
+export const filterArray = (expression, data) => {
+  var regex = convertWildcardStringToRegExp(expression);
+  return data.filter(function (item) {
+    return regex.test(item.email) || regex.test(item.phone);
+  });
+};
+
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function convertWildcardStringToRegExp(expression) {
+  var terms = expression.split("*");
+
+  var trailingWildcard = false;
+
+  var expr = "";
+  for (var i = 0; i < terms.length; i++) {
+    if (terms[i]) {
+      if (i > 0 && terms[i - 1]) {
+        expr += ".*";
+      }
+      trailingWildcard = false;
+      expr += escapeRegExp(terms[i]);
+    } else {
+      trailingWildcard = true;
+      expr += ".*";
+    }
+  }
+
+  if (!trailingWildcard) {
+    expr += ".*";
+  }
+
+  return new RegExp("^" + expr + "$", "i");
+}

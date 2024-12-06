@@ -1,0 +1,42 @@
+
+
+
+.search-box{
+    border-radius: 10px;
+  border: 0px;
+  background-color: aliceblue;
+  font-size: 10px;
+  width: 100%;
+  padding: 10px;
+
+}
+
+
+
+.chat-wrapper {
+    height: 520px;
+    overflow: auto;
+    margin-bottom: 20px;
+  }
+
+
+.message-input-wrapper{
+
+    position: relative;
+    bottom: -10px;
+
+    .chat-message{
+        padding: 10px 20px;
+        font-size: 15px;
+        background-color: aqua;
+        border-radius: 5px;
+        width: 100%;
+        border: 0px;
+
+    }
+
+    .send-icon{
+
+    }
+
+}
