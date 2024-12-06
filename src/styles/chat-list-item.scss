@@ -1,0 +1,58 @@
+
+
+
+
+.chat-ul-wrapper {
+    padding: 0px;
+    margin: 0px;
+    list-style-type: none;
+  
+    .shit-left {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+      background-color: gray;
+      color: #ffffff;
+      padding: 10px;
+      float: left;
+      width: 60%;
+    }
+  
+    .shit-right {
+      border-bottom-left-radius: 10px;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      background-color: cadetblue;
+      color: #ffffff;
+      padding: 10px;
+      text-align: end;
+      float: right;
+      width: 60%;
+    }
+  
+    li {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    
+.time-shift-right {
+    text-align: end;
+  }
+  
+  .time-shift-left {
+    text-align: left;
+  }
+
+  .text-start{
+    float: left;
+  }
+  
+.time-keeper-text {
+    color: #dadada;
+    font-size: 10px;
+    display: block;
+    margin-top: 20px;
+  }
+  
+  }

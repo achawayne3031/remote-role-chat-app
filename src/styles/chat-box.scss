@@ -14,7 +14,7 @@
 
 
 .chat-wrapper {
-    height: 520px;
+    height: 480px;
     overflow: auto;
     margin-bottom: 20px;
   }
@@ -35,8 +35,17 @@
 
     }
 
-    .send-icon{
+    
+.send-icon{
+    cursor: pointer;
+    position: absolute;
+    font-size: 20px;
+    right: 20px;
+    top: 10px;
+}
 
-    }
+   
+
 
 }
+

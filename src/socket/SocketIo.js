@@ -11,13 +11,14 @@ export const connectedUsers = [];
 export const connectUser = (data) => {
   socket.connect();
   socket.emit("connected", data);
+};
 
-  //   socket.on("emit-connected-user-list", (values) => {
-  //     let exists = !!connectedUsers.find((value) => value.email === data.email);
-  //     if (!exists) {
-  //       // connectedUsers.push(data);
-  //     }
-  //   });
+export const sendMessage = (data) => {
+  socket.emit("send-message", data);
+};
+
+export const getMessage = () => {
+  socket.emit("get-message");
 };
 
 export const disConnectUser = (data) => {

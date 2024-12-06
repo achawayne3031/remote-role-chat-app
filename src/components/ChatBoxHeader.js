@@ -1,12 +1,10 @@
 import { getFirstLetter } from "../util/funcHelper";
-import "./../styles/user-item.scss";
+import "./../styles/chat-box-header.scss";
 
-const UserItem = ({ data, onClick }) => {
+const ChatBoxHeader = ({ data }) => {
   return (
     <>
-      <div className="d-flex item-wrapper" onClick={onClick}>
-        {data.active ? <span className="indicator"></span> : ""}
-
+      <div className="d-flex header-wrapper">
         <div className="logo-wrapper">
           <p className="logo">{getFirstLetter(data.name)}</p>
         </div>
@@ -14,12 +12,9 @@ const UserItem = ({ data, onClick }) => {
           <h5>{data.name}</h5>
           <p>{data.email}</p>
         </div>
-        <div className="time-wrapper">
-          <p>{data.loggedTime}</p>
-        </div>
       </div>
     </>
   );
 };
 
-export default UserItem;
+export default ChatBoxHeader;

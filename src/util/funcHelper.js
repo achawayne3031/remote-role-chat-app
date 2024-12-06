@@ -1,3 +1,14 @@
+export const getFirstLetter = (name) => {
+  if (name != undefined && name != "") {
+    let separatedName = name.split(" ");
+    let firstLetter = separatedName[0].charAt(0);
+    let secondeLetter =
+      separatedName[1] != undefined ? separatedName[1].charAt(0) : "";
+    let abb = firstLetter + secondeLetter;
+    return abb.toUpperCase();
+  }
+};
+
 export const filterArray = (expression, data) => {
   var regex = convertWildcardStringToRegExp(expression);
   return data.filter(function (item) {

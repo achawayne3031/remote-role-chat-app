@@ -5,12 +5,14 @@ import React, { useEffect, useState } from "react";
 import "./../styles/signup.scss";
 import chatLogo from "./../assets/chatLogo.png";
 import { useSelector, useDispatch } from "react-redux";
-import { addConnectedUser, setUserForChat } from "../store/chatSlice";
-import { setLoggedIn, addUserData, setConnected } from "../store/userStatus";
+import { setUserForChat } from "../store/chatSlice";
 import UserItem from "../components/UserItem";
 import "./../styles/chat-box.scss";
 import { filterArray } from "../util/funcHelper";
-import { socket } from "../socket/SocketIo";
+import { sendMessage, socket, getMessage } from "../socket/SocketIo";
+import ChatBoxHeader from "../components/ChatBoxHeader";
+import ChatItemList from "../components/ChatItemList";
+import { useRef } from "react";
 
 const ChatBox = () => {
   const connectedUserListStored = useSelector(
@@ -25,6 +27,8 @@ const ChatBox = () => {
   const loggedIn = useSelector((state) => state.user.loggedIn);
   const connected = useSelector((state) => state.user.connected);
 
+  const chatWrapperRef = useRef(null);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -33,9 +37,14 @@ const ChatBox = () => {
       navigate("/");
     }
     setConnectedUsersList(connectedUserListStored);
-  }, [connected, loggedIn, connectedUsersList]);
+    chatWrapperRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
+  }, [connected, loggedIn, connectedUserListStored, chatMessage]);
 
   const [searchText, setSearchText] = useState("");
+  const [messageText, setMessageText] = useState("");
 
   const handleSearchFilter = async (event) => {
     const value = event.target.value;
@@ -58,26 +67,59 @@ const ChatBox = () => {
 
   const handleSelectUserToChat = (data) => {
     dispatch(setUserForChat(data));
+
+    getMessage();
+
+    socket.on("emit-get-message", (severMessageData) => {
+      let getOurDataOut = severMessageData.find(
+        (myData) => myData.email === selectedUser.email
+      );
+
+      if (getOurDataOut && getOurDataOut != undefined) {
+        let selectedUserChat = getOurDataOut.messages;
+
+        setChatMessage(selectedUserChat);
+      }
+    });
   };
 
-  const handleSendChatMessage = (event) => {
+  const handleMessageText = (event) => {
     const value = event.target.value;
+    setMessageText(value);
+  };
+
+  const handleSendChatMessage = () => {
     let d = new Date();
-    if (value !== "") {
+    if (messageText !== "") {
       let socketMessageData = {
-        to: selectedUser.socketId,
-        from: currentUserData.socketId,
-        message: value,
+        to: selectedUser.email,
+        from: currentUserData.email,
+        message: messageText,
         timeAgo: d.toLocaleTimeString(),
         read: false,
       };
-      socket.emit("send-message", socketMessageData);
+
+      /// Send message to user ///
+      sendMessage(socketMessageData);
+
+      socket.on("emit-sent-message", (severMessageData) => {
+        let getOurDataOut = severMessageData.find(
+          (myData) => myData.email === selectedUser.email
+        );
+
+        if (getOurDataOut && getOurDataOut != undefined) {
+          let selectedUserChat = getOurDataOut.messages;
+
+          setChatMessage(selectedUserChat);
+        }
+      });
+
+      setMessageText("");
     }
   };
 
   const handleTrackKeyPress = (event) => {
-    const value = event.target.value;
-    if (value !== "" && event.key == "Enter") {
+    if (event.key == "Enter" && messageText !== "") {
       event.preventDefault();
       handleSendChatMessage();
     }
@@ -89,7 +131,6 @@ const ChatBox = () => {
         <Container
           style={{
             backgroundColor: "#ffffff",
-
             padding: "30px",
           }}
         >
@@ -111,30 +152,42 @@ const ChatBox = () => {
                 />
               </div>
 
-              {connectedUsersList &&
-                connectedUsersList.map((userItem) => {
-                  return (
-                    <UserItem
-                      onClick={() => handleSelectUserToChat(userItem)}
-                      data={userItem}
-                    />
-                  );
-                })}
+              {connectedUsersList
+                ? connectedUsersList.map((userItem) => {
+                    if (userItem.email !== currentUserData.email) {
+                      return (
+                        <UserItem
+                          onClick={() => handleSelectUserToChat(userItem)}
+                          data={userItem}
+                        />
+                      );
+                    }
+                  })
+                : ""}
             </div>
 
             <div className="col-md-9 col-sm-12">
-              <div>
-                <h5>{selectedUser && selectedUser.name}</h5>
+              {selectedUser.email ? <ChatBoxHeader data={selectedUser} /> : ""}
+
+              <div className="chat-wrapper" ref={chatWrapperRef}>
+                <ChatItemList
+                  chatItemData={chatMessage}
+                  currentUserData={currentUserData}
+                />
               </div>
-              <div className="chat-wrapper"></div>
 
               <div className="message-input-wrapper">
                 <input
-                  onChange={handleSendChatMessage}
-                  onKeyUp={handleTrackKeyPress}
+                  value={messageText}
+                  onChange={handleMessageText}
+                  onKeyUp={(e) => handleTrackKeyPress(e)}
                   className="chat-message"
                   placeholder="Message"
                 />
+                <span
+                  onClick={() => handleSendChatMessage()}
+                  className="send-icon fa fa-paper-plane"
+                ></span>
               </div>
             </div>
           </div>

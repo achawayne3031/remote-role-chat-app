@@ -42,18 +42,19 @@ const SignUp = () => {
 
     dispatch(setLoggedIn());
     dispatch(setConnected());
+    dispatch(addUserData(values));
 
     //// Update connected users on the store /////
     socket.on("emit-connected-user-list", (serverData) => {
       dispatch(setConnectedUsers(serverData));
     });
 
-    setTimeout(() => {
-      if (socket.io.engine) {
-        // close the low-level connection and trigger a reconnection
-        socket.io.engine.close();
-      }
-    }, 10000);
+    // setTimeout(() => {
+    //   if (socket.io.engine) {
+    //     // close the low-level connection and trigger a reconnection
+    //     socket.io.engine.close();
+    //   }
+    // }, 10000);
 
     navigate("/chat-box");
   };
