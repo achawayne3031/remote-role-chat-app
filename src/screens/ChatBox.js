@@ -44,10 +44,6 @@ const ChatBox = () => {
       navigate("/");
     }
     setConnectedUsersList(connectedUserListStored);
-    chatWrapperRef.current.scrollIntoView({
-      behavior: "smooth",
-      block: "end",
-    });
 
     // //// Update connected users on the store /////
     socket.on("disconnect", (serverData) => {});
@@ -58,9 +54,13 @@ const ChatBox = () => {
 
     ///// get sent messages ////
     socket.on("emit-sent-message", (severMessageData) => {
+      dispatch(setConnectedUsers(severMessageData));
+
       let getOurDataOut = severMessageData.find(
         (myData) => myData.email === selectedUser.email
       );
+
+      console.log(getOurDataOut, "oder user");
 
       if (getOurDataOut && getOurDataOut != undefined) {
         let selectedUserChat = getOurDataOut.messages;
@@ -92,19 +92,22 @@ const ChatBox = () => {
     }
   };
 
-  const handleChange = async (event) => {
-    //  const name = event.target.name;
-    //  const value = event.target.value;
-    // setFieldValue(name, value);
-  };
+  const handleChange = async (event) => {};
 
   const handleSelectUserToChat = (data) => {
     dispatch(setUserForChat(data));
 
-    getMessage();
+    let markAsReadData = {
+      from: data.email,
+      to: currentUserData.email,
+    };
+
+    getMessage(markAsReadData);
 
     ///// Get messages /////
     socket.on("emit-get-message", (severMessageData) => {
+      dispatch(setConnectedUsers(severMessageData));
+
       let getOurDataOut = severMessageData.find(
         (myData) => myData.email === data.email
       );
@@ -158,6 +161,23 @@ const ChatBox = () => {
     navigate("/");
   };
 
+  const allocateNotifictaion = (eachUserData) => {
+    var urEmail = currentUserData.email;
+    var messages = eachUserData.messages;
+
+    let count = 0;
+
+    for (let index = 0; index < messages.length; index++) {
+      const element = messages[index];
+      if (element.to == urEmail) {
+        if (!element.read) {
+          count++;
+        }
+      }
+    }
+    return count;
+  };
+
   return (
     <>
       <Container fluid style={{ backgroundColor: "#8BABD8", padding: "50px" }}>
@@ -198,6 +218,8 @@ const ChatBox = () => {
 
               {connectedUsersList
                 ? connectedUsersList.map((userItem) => {
+                    allocateNotifictaion(userItem);
+
                     if (userItem.email !== currentUserData.email) {
                       return (
                         <UserItem
@@ -205,6 +227,7 @@ const ChatBox = () => {
                             handleSelectUserToChat(userItem);
                           }}
                           data={userItem}
+                          notification={allocateNotifictaion(userItem)}
                         />
                       );
                     }

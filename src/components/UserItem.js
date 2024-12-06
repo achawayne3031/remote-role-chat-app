@@ -1,7 +1,7 @@
 import { getFirstLetter } from "../util/funcHelper";
 import "./../styles/user-item.scss";
 
-const UserItem = ({ data, onClick }) => {
+const UserItem = ({ data, onClick, notification }) => {
   return (
     <>
       <div className="d-flex item-wrapper" onClick={onClick}>
@@ -16,6 +16,7 @@ const UserItem = ({ data, onClick }) => {
         </div>
         <div className="time-wrapper">
           <p>{data.loggedTime}</p>
+          <p className="notify-count">{notification}</p>
         </div>
       </div>
     </>

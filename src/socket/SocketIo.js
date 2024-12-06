@@ -32,8 +32,8 @@ export const sendMessage = (data) => {
   socket.emit("send-message", data);
 };
 
-export const getMessage = () => {
-  socket.emit("get-message");
+export const getMessage = (data) => {
+  socket.emit("get-message", data);
 };
 
 export const disConnectUser = (data) => {
