@@ -56,10 +56,6 @@ const ChatBox = () => {
       dispatch(setConnectedUsers(serverData));
     });
 
-    // socket.on("emit-opened-notification", (serverData) => {
-    //   dispatch(setConnectedUsers(serverData));
-    // });
-
     ///// get sent messages ////
     socket.on("emit-sent-message", (severMessageData) => {
       dispatch(setConnectedUsers(severMessageData));
@@ -98,11 +94,8 @@ const ChatBox = () => {
     }
   };
 
-  const handleChange = async (event) => {};
-
   const handleSelectUserToChat = (data) => {
     dispatch(setUserForChat(data));
-    ///setChatIsOpen(true);
 
     let markAsReadData = {
       from: data.email,
