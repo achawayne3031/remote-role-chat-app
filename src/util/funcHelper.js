@@ -1,3 +1,17 @@
+export const getLastMessage = (email, data) => {
+  var lastMessage = "";
+
+  for (let index = data.length; index > 1; index--) {
+    const element = data[index - 1];
+    if (element.to == email) {
+      lastMessage = element?.message?.substring(0, 21) + "...";
+      break;
+    }
+  }
+
+  return lastMessage;
+};
+
 export const getFirstLetter = (name) => {
   if (name != undefined && name != "") {
     let separatedName = name.split(" ");

@@ -247,6 +247,7 @@ const ChatBox = () => {
                             handleSelectUserToChat(userItem);
                           }}
                           data={userItem}
+                          currentUserData={currentUserData}
                           notification={allocateNotifictaion(userItem)}
                         />
                       );
