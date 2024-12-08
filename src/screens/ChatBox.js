@@ -21,6 +21,7 @@ import ChatItemList from "../components/ChatItemList";
 import { useRef } from "react";
 import { setConnectedUsers } from "../store/chatSlice";
 import { logOutUser } from "../store/userStatus";
+import UserProfile from "../components/UserProfile";
 
 const ChatBox = () => {
   const connectedUserListStored = useSelector(
@@ -35,6 +36,7 @@ const ChatBox = () => {
   const loggedIn = useSelector((state) => state.user.loggedIn);
   const connected = useSelector((state) => state.user.connected);
   const [chatIsOpen, setChatIsOpen] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   const chatWrapperRef = useRef(null);
 
@@ -108,7 +110,7 @@ const ChatBox = () => {
 
   const handleSelectUserToChat = (data) => {
     dispatch(setUserForChat(data));
-    setChatIsOpen(true);
+    ///setChatIsOpen(true);
 
     let markAsReadData = {
       from: data.email,
@@ -116,6 +118,7 @@ const ChatBox = () => {
     };
 
     getMessage(markAsReadData);
+    setShowProfile(true);
 
     ///// Get messages /////
     socket.on("emit-get-message", (severMessageData) => {
@@ -174,6 +177,10 @@ const ChatBox = () => {
     navigate("/");
   };
 
+  const handleShowProfile = () => {
+    setShowProfile(false);
+  };
+
   const allocateNotifictaion = (eachUserData) => {
     var urEmail = currentUserData.email;
     var messages = eachUserData.messages;
@@ -197,12 +204,12 @@ const ChatBox = () => {
         <Container
           style={{
             backgroundColor: "#ffffff",
-            padding: "30px",
+            padding: "0px",
           }}
         >
           <div className="row">
             <div
-              style={{ backgroundColor: "#ffffff" }}
+              style={{ backgroundColor: "#ffffff", padding: "30px" }}
               className="col-md-3 col-12"
             >
               <div className="text-center">
@@ -249,27 +256,46 @@ const ChatBox = () => {
             </div>
 
             <div className="col-md-9 col-sm-12">
-              {selectedUser.email ? <ChatBoxHeader data={selectedUser} /> : ""}
+              <div className="d-flex">
+                <div className="flex-fill">
+                  {selectedUser.email ? (
+                    <ChatBoxHeader data={selectedUser} />
+                  ) : (
+                    ""
+                  )}
 
-              <div className="chat-wrapper" ref={chatWrapperRef}>
-                <ChatItemList
-                  chatItemData={chatMessage}
-                  currentUserData={currentUserData}
-                />
-              </div>
+                  <div className="chat-wrapper" ref={chatWrapperRef}>
+                    <ChatItemList
+                      chatItemData={chatMessage}
+                      currentUserData={currentUserData}
+                    />
+                  </div>
 
-              <div className="message-input-wrapper">
-                <input
-                  value={messageText}
-                  onChange={handleMessageText}
-                  onKeyUp={(e) => handleTrackKeyPress(e)}
-                  className="chat-message"
-                  placeholder="Message"
-                />
-                <span
-                  onClick={() => handleSendChatMessage()}
-                  className="send-icon fa fa-paper-plane"
-                ></span>
+                  <div className="message-input-wrapper">
+                    <input
+                      value={messageText}
+                      onChange={handleMessageText}
+                      onKeyUp={(e) => handleTrackKeyPress(e)}
+                      className="chat-message"
+                      placeholder="Message"
+                    />
+                    <span
+                      onClick={() => handleSendChatMessage()}
+                      className="send-icon fa fa-paper-plane"
+                    ></span>
+                  </div>
+                </div>
+
+                <div>
+                  {showProfile ? (
+                    <UserProfile
+                      data={selectedUser}
+                      onClick={handleShowProfile}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </div>
               </div>
             </div>
           </div>

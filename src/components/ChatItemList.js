@@ -11,8 +11,8 @@ const ChatItemList = ({ chatItemData, currentUserData }) => {
                 key={index}
                 className={
                   chatItem.to == currentUserData.email
-                    ? "shit-right"
-                    : "shit-left"
+                    ? "shit-left"
+                    : "shit-right"
                 }
               >
                 <span className="text-start">{chatItem.message}</span>

@@ -10,20 +10,18 @@
     .shit-left {
       border-top-left-radius: 10px;
       border-top-right-radius: 10px;
-      border-bottom-right-radius: 10px;
-      background-color: gray;
-      color: #ffffff;
+      border-bottom-left-radius: 10px;
+      background-color: #ffffff;
       padding: 10px;
       float: left;
       width: 60%;
     }
   
     .shit-right {
-      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
       border-top-left-radius: 10px;
       border-top-right-radius: 10px;
-      background-color: cadetblue;
-      color: #ffffff;
+      background-color: #DEE9FF;
       padding: 10px;
       text-align: end;
       float: right;
@@ -41,7 +39,7 @@
   }
   
   .time-shift-left {
-    text-align: left;
+    float: right;
   }
 
   .text-start{
@@ -49,7 +47,6 @@
   }
   
 .time-keeper-text {
-    color: #dadada;
     font-size: 10px;
     display: block;
     margin-top: 20px;
