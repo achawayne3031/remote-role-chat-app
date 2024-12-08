@@ -16,6 +16,7 @@ const UserProfile = ({ data, onClick }) => {
             <p>{data.email}</p>
           </div>
         </div>
+        <hr />
       </div>
     </>
   );
