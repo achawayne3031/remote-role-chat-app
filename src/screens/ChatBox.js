@@ -64,14 +64,6 @@ const ChatBox = () => {
     socket.on("emit-sent-message", (severMessageData) => {
       dispatch(setConnectedUsers(severMessageData));
 
-      //   if (chatIsOpen) {
-      //     let markAsReadData = {
-      //       from: selectedUser.email,
-      //       to: currentUserData.email,
-      //     };
-      //     updateNotification(markAsReadData);
-      //   }
-
       let getOurDataOut = severMessageData.find(
         (myData) => myData.email === selectedUser.email
       );

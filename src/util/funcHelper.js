@@ -25,6 +25,7 @@ export const getFirstLetter = (name) => {
 
 export const filterArray = (expression, data) => {
   var regex = convertWildcardStringToRegExp(expression);
+
   return data.filter(function (item) {
     return regex.test(item.email) || regex.test(item.phone);
   });
